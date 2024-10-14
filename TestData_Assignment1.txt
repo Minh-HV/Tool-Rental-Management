@@ -1,0 +1,268 @@
+DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS rentals;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS tool_categories;
+DROP TABLE IF EXISTS tools;
+DROP TABLE IF EXISTS rental_lines;
+DROP TABLE IF EXISTS returns;
+DROP TABLE IF EXISTS power_tools;
+
+
+Select * FROM customers;
+Select * FROM rentals;
+Select * FROM categories;
+Select * FROM tool_categories;
+Select * FROM tools;
+Select * FROM rental_lines;
+Select * FROM returns;
+Select * FROM  power_tools;
+
+
+/*CREATE TABLE "Customers": */
+
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,  
+    first_name VARCHAR(50) NOT NULL,            
+    last_name VARCHAR(50) NOT NULL,            
+    date_of_birth DATE,              
+    gender VARCHAR(6) CHECK (gender IN ('Male', 'Female')), 
+    phone VARCHAR(15),                        
+    email_address VARCHAR(255) UNIQUE,
+    street VARCHAR(100),                       
+    city VARCHAR(50),                          
+    province VARCHAR(50),                     
+    postal_code VARCHAR(10)                    
+);
+
+/* CREATE TABLE "rentals" */
+CREATE TABLE rentals (
+    rental_id INT PRIMARY KEY, 
+	start_date DATE NOT NULL,                       
+    due_date DATE NOT NULL, 
+    customer_id INT,         
+	order_date DATE,
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id));
+
+ 
+/* CREATE TABLE "categories*/
+CREATE TABLE "categories" (
+    category_id INT PRIMARY KEY,  
+    category_name VARCHAR(50) NOT NULL        
+);
+
+/* CREATE TABLE "tools" */
+
+CREATE TABLE tools (
+    tool_id INT PRIMARY KEY,               
+    tool_name VARCHAR(50) NOT NULL,                   
+    rental_price_per_day DECIMAL(10, 2) NOT NULL,     
+    dimensions VARCHAR(30),                                    
+    weight_lbs DECIMAL(10, 2));                              
+	   
+/* CREATE TABLE tool_categories*/
+
+CREATE TABLE tool_categories (
+    categories_id INT NOT NULL,      
+    tool_id INT NOT NULL,            
+    PRIMARY KEY (categories_id, tool_id),  
+    FOREIGN KEY (categories_id) REFERENCES categories(category_id),  
+    FOREIGN KEY (tool_id) REFERENCES tools(tool_id)                   
+);
+
+/* CREATE TABLE "rental_lines"*/
+
+CREATE TABLE rental_lines (
+    rental_line_id INT PRIMARY KEY IDENTITY(1,1),       
+    rental_id INT NOT NULL,                            
+    tool_id INT NOT NULL,
+    tax DECIMAL(10, 2) NOT NULL,  
+	FOREIGN KEY (rental_id) REFERENCES rentals(rental_id),   
+    FOREIGN KEY (tool_id) REFERENCES tools(tool_id));
+
+/* CREATE TABLE "returns" */
+
+CREATE TABLE returns (
+    rental_line_id INT PRIMARY KEY, -- Set rental_line_id as the primary key
+    returned_date DATE NOT NULL,                    
+    condition VARCHAR(50),                            
+    penalty_fee DECIMAL(10, 2),                      
+    FOREIGN KEY (rental_line_id) REFERENCES rental_lines(rental_line_id) -- Maintain foreign key reference
+);
+
+
+
+/* CREATE TABLE "power_tools" */
+
+CREATE TABLE power_tools (
+    tool_id INT PRIMARY KEY,         -- Tool ID serves as the primary key and foreign key--
+    battery_type VARCHAR(30) ,                  
+    power_rating_watts DECIMAL(10, 2),          
+    voltage_volts DECIMAL(10, 2),                      
+    FOREIGN KEY (tool_id) REFERENCES tools(tool_id))  ; 
+
+
+/*INSERT STATEMENT*/
+
+INSERT INTO customers (customer_id, first_name, last_name, phone, email_address, gender, date_of_birth,   street, city, province, postal_code)
+VALUES
+(101, 'Donald','Doe','1-613-483-9701','doe011@gmail.com', 'Male','1995-09-15','628 George Ave','Ottawa','ON','K1N 1X8'),
+(102, 'Angle','Smith','1-264-374-7442',	'sAnne98@gmail.com', 'Male', '1980-07-18','234 Pine Dr', 'Ottawa', 'ON', 'V6M 0A2'),
+(103, 'Anne', 'Tran', '1-264-374-7443',	'tran0023@gmail.com','Male', '1981-01-29', '872 Cedar Ln', 'Ottawa', 'ON', 'K9A 0M2'),
+(104, 'Joe', 'Johnson', '1-264-374-7444','jon123@gmail.com', 'Female','1987-08-26', '999 Birch Way', 'Ottawa', 'ON', 'K5A 5A7'),
+(105, 'Mike', 'Rockie', '1-264-374-7445', 'roc345@gmail.com', 'Male', '1990-11-13', '212 Ash St', 'Ottawa', 'ON', 'K6G 2R3'),
+(106, 'Rosie', 'Lin', '1-264-374-7446', 'Lin333@gmail.com', 'Female','1991-03-18', '345 Poplar St', 'Ottawa','ON','V3Z 2Y7'),
+(107, 'John', 'Wilson', '1-264-374-7447', 'wils27889@gmail.com','Female', '1989-01-01', '19 Spruce Blvd', 'Ottawa', 'ON', 'M1V 0A6'),
+(108, 'Frank', 'Hailey','1-264-374-7448', 'hailey23456@gmail.com', 'Female', '1993-03-04', '923 Clarent St', 'Ottawa', 'ON', 'K8V 3K7'),
+(109, 'Emily', 'Don', '1-264-374-7449', 'emdon12@gmail.com', 'Female', '1995-08-02', '496 St. Laurent St', 'Ottawa','ON', 'K3H 2Y9'),
+(110, 'Paris', 'Louis', '1-264-374-7450', 'Louis009@gmail.com', 'Male', '1986-12-18', '207 Walnut Rd', 'Ottawa', 'ON', 'A3B 2Y3');
+
+
+INSERT INTO rentals (rental_id, start_date, due_date, customer_id, order_date) VALUES
+(201, '2024-09-01', '2024-09-10',104, '2024-08-15'),
+(202, '2024-09-04', '2024-09-12', 102, '2024-08-16'),
+(203, '2024-09-12', '2024-09-18', 101, '2024-08-16' ),
+(204, '2024-09-13', '2024-09-17', 103, '2024-08-22' ),
+(205, '2024-09-16', '2024-09-20', 107, '2024-08-29' ),
+(206, '2024-09-17', '2024-09-24', 106, '2024-09-05'),
+(207, '2024-09-18', '2024-09-25', 109, '2024-09-09' ),
+(208, '2024-09-19', '2024-09-22', 108, '2024-09-10'),
+(209, '2024-09-20', '2024-09-28', 105, '2024-09-11'),
+(210, '2024-09-21', '2024-09-29', 110, '2024-09-16');
+
+
+INSERT INTO tools (tool_id, tool_name, rental_price_per_day, dimensions, weight_lbs) VALUES
+(401, 'Circular Saw S1', 30, ' 15x9x10 in ', 9.5),
+(402, 'Electric Screwdriver E1', 15, '8x2x2 in', 1.8),
+(403, 'Jigsaw J1', 20, '10x3x7 in', 5),
+(404, 'Angle Grinder A1', 25, '16x4x5 in', 6.5),
+(405, 'Circular Saw S2', 30, '19x10x9 in', 4.2),
+(406, 'Cordless Drill C2', 25, '9x3x8 in', 4.8),
+(407, 'Jigsaw J2', 20, '12x6x8 in', 2.5),
+(408, 'Hand Saw V1', 5, '26x5x1 in', 1.2),
+(409, 'Adjustable Wrench A2', 4, '10x3x1 in', 1),
+(410, 'Hammer', 4, '13x5x1.5 in', 1.5),
+(411, 'Ball Grip Electric Screwdriver', 7, '8.5x3x3 in', 2.2),
+(412, 'Cordless Ratchet Wrenches', 15, '10x3x3 in', 2.8),
+(413, 'Rotary Tools R1', 20, '9.5x2x2 in', 1.4);
+
+
+
+INSERT INTO rental_lines (rental_ID, tool_ID, tax)
+VALUES
+(201, 401, 0.13),
+(201, 402, 0.13),
+(201, 403, 0.13),
+(202, 404, 0.13),
+(202, 405, 0.13),
+(202, 406, 0.13),
+(202, 407, 0.13),
+(203, 408, 0.13),
+(203, 409, 0.13),
+(203, 410, 0.13),
+(204, 411, 0.13),
+(204, 412, 0.13),
+(205, 413, 0.13),
+(205, 401, 0.13),
+(206, 402, 0.13),
+(206, 403, 0.13),
+(206, 404, 0.13),
+(207, 405, 0.13),
+(207, 406, 0.13),
+(208, 407, 0.13),
+(208, 408, 0.13),
+(209, 409, 0.13),
+(209, 410, 0.13),
+(209, 411, 0.13),
+(210, 412, 0.13),
+(210, 413, 0.13);
+
+
+INSERT INTO returns (rental_line_id, returned_date, penalty_fee, condition) VALUES
+(1, '2024-09-10', 250.00, 'Severely Damage'),
+(2, '2024-09-10', 0.00, 'Good'),
+(3, '2024-09-10', 0.00, 'Good'),
+(4, '2024-09-12', 0.00, 'Good'),
+(5, '2024-09-12', 100.00, 'Partially Damage'),
+(6, '2024-09-12', 0.00, 'Good'),
+(7, '2024-09-12', 50.00, 'Slightly Damage'),
+(8, '2024-09-18', 0.00, 'Good'),
+(9, '2024-09-18', 0.00, 'Good'),
+(10, '2024-09-18', 0.00, 'Good'),
+(11, '2024-09-17', 250.00, 'Severely Damage'),
+(12, '2024-09-17', 250.00, 'Severely Damage'),
+(13, '2024-09-20', 0.00, 'Good'),
+(14, '2024-09-20', 0.00, 'Good'),
+(15, '2024-09-24', 0.00, 'Good'),
+(16, '2024-09-24', 100.00, 'Partially Damage'),
+(17, '2024-09-24', 0.00, 'Good'),
+(18, '2024-09-25', 0.00, 'Good'),
+(19, '2024-09-25', 100.00, 'Partially Damage'),
+(20, '2024-09-22', 0.00, 'Good'),
+(21, '2024-09-22', 50.00, 'Slightly Damage'),
+(22, '2024-09-28', 0.00, 'Good'),
+(23, '2024-09-28', 0.00, 'Good'),
+(24, '2024-09-28', 50.00, 'Slightly Damage'),
+(25, '2024-09-29', 0.00, 'Good'),
+(26, '2024-09-30', 100.00, 'Partially Damage');
+
+
+INSERT INTO categories (category_id, category_name) VALUES
+(501, 'Hand_Tools'),
+(502, 'Power_Tools');
+
+INSERT INTO tool_categories (tool_id, categories_id) VALUES
+(401, 501),
+(402, 501),
+(403, 501),
+(404, 501),
+(405, 501),
+(406, 501),
+(407, 501),
+(408, 502),
+(409, 502),
+(410, 502),
+(411, 501),
+(412, 501),
+(413, 501),
+(411, 502),
+(412, 502),
+(413, 502);
+
+INSERT INTO power_tools (tool_id, battery_type, power_rating_watts, voltage_volts) VALUES
+(401, 'Lithium-Ion', 1200, 120),
+(402, 'Lithium-Ion', 400, 12),
+(403, 'Nickel-Cadmium', 500, 120),
+(404, 'Lithium-Ion', 800, 120),
+(405, 'Nickel-Cadmium', 1500, 120),
+(406, 'Lithium-Ion', 600, 18),
+(407, 'Nickel-Cadmium', 600, 120),
+(411, 'Lithium-Ion', 200, 6),
+(412, 'Lithium-Ion', 180, 20),
+(413, 'Nickel-Cadmium', 150, 12);
+
+
+
+-- Create Trigger that raises error when user inputs due date earlier than start date
+USE Assignment_01
+GO
+
+DROP TRIGGER IF EXISTS CheckBadDueDate;
+GO
+
+CREATE TRIGGER CheckBadDueDate
+ON rentals
+FOR INSERT, UPDATE
+AS
+BEGIN
+    DECLARE
+        @StartDate DATE,
+        @DueDate DATE;
+
+    SELECT @StartDate = start_date, @DueDate = due_date FROM INSERTED;
+
+     IF @DueDate < @StartDate
+    BEGIN
+        RAISERROR('Data Validation Error: The due date cannot be earlier than the start date.', 10, 1);
+        ROLLBACK TRANSACTION;  
+    END
+END
